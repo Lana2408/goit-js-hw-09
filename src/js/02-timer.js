@@ -30,11 +30,15 @@ function convertMs(ms) {
   const leftSeconds = document.querySelector('[data-seconds]')
 const inputDate = document.querySelector('#datetime-picker');
 const startButton = document.querySelector('[data-start]')
+const resetButton = document.querySelector('[data-reset]')
 
-startButton.addEventListener("click", onButton);
+startButton.addEventListener("click", onStartButton);
+resetButton.addEventListener("click", onResetButton);
 startButton.disabled = true;
+resetButton.disabled = true;
 
 let selectedDate; 
+let interval;
 
 flatpickr(inputDate, {
     enableTime: true,
@@ -48,16 +52,18 @@ flatpickr(inputDate, {
       if (deltaDate > 0) {
         startButton.disabled = false;
       } else {
-        btnStartEl.disabled = true;
+        startButton.disabled = true;
       }
     },
   });
 
-  function onButton(event) {
+  function onStartButton(event) {
     console.log('Start timer');
     startButton.disabled = true;
+    resetButton.disabled = false;
+    inputDate.disabled = true;
   
-    const interval = setInterval(() => {
+    interval = setInterval(() => {
       const deltaDate = selectedDate - Date.now();
   
       if (deltaDate >= 0) {
@@ -75,3 +81,16 @@ flatpickr(inputDate, {
   }
   
 
+  function onResetButton(event) {
+    startButton.disabled = false;
+    resetButton.disabled = true;
+
+    inputDate.disabled = false;
+    clearInterval(interval);
+
+    inputDate.value = '';
+    leftDays.textContent = '00';
+    leftHours.textContent = '00';
+    leftMinutes.textContent = '00';
+    leftSeconds.textContent = '00';
+  } 
